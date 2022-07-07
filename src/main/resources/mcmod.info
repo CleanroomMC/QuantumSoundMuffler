@@ -1,16 +1,16 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
+  "modid": "quantumsoundmuffler",
+  "name": "Quantum Sound Muffler",
   "description": "Example placeholder mod.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["CleanroomMC"],
+  "authorList": ["Caedis"],
   "credits": "Authors of this project",
   "logoFile": "",
   "screenshots": [],
-  "dependencies": []
+  "dependencies": [""]
 }
 ]

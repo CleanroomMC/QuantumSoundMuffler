@@ -1,10 +1,10 @@
 buildscript {
     repositories {
-        maven { 
-			url = 'https://maven.cleanroommc.com' 
+        maven {
+			url = 'https://maven.cleanroommc.com'
 		}
-		maven { 
-			url = 'https://repo.spongepowered.org/maven' 
+		maven {
+			url = 'https://repo.spongepowered.org/maven'
 		}
     }
     dependencies {
@@ -54,8 +54,8 @@ minecraft {
 }
 
 repositories {
-	maven { 
-		url = 'https://maven.cleanroommc.com' 
+	maven {
+		url = 'https://maven.cleanroommc.com'
 	}
     maven {
         url = 'https://repo.spongepowered.org/maven'
@@ -70,7 +70,7 @@ dependencies {
 	if (project.use_mixins.toBoolean()) {
 		deobfCompile 'zone.rong:mixinbooter:4.2'
     }
-	
+
 }
 
 sourceSets {
@@ -110,6 +110,8 @@ jar {
 		if (project.use_mixins.toBoolean()) {
 			attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
 		}
+		// false for dev and true for non dev
+		attribute_map['ForceLoadAsMod'] = false
         attributes(attribute_map)
     }
 }
