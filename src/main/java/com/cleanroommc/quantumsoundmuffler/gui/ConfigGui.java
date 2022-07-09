@@ -1,11 +1,9 @@
 package com.cleanroommc.quantumsoundmuffler.gui;
 
-import com.cleanroommc.modularui.ModularUI;
 import com.cleanroommc.modularui.api.ModularUITextures;
 import com.cleanroommc.modularui.api.drawable.AdaptableUITexture;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.drawable.shapes.Rectangle;
-import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Color;
 import com.cleanroommc.modularui.api.screen.ModularWindow;
 import com.cleanroommc.modularui.api.screen.UIBuildContext;
@@ -13,18 +11,15 @@ import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.quantumsoundmuffler.QuantumSoundMuffler;
 import com.cleanroommc.quantumsoundmuffler.interfaces.ISoundLists;
 import com.cleanroommc.quantumsoundmuffler.utils.DataManger;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 public class ConfigGui implements ISoundLists
 {
-
-	//TODO remember last state
-	private static State state = State.ALL;
+	private static State state = State.Recent;
 
 	private static final AdaptableUITexture BACKGROUND = AdaptableUITexture.of("modularui:gui/background/background", 176, 166, 3);
+
 
 	public static ModularWindow createConfigWindow(UIBuildContext buildContext)
 	{
@@ -40,17 +35,36 @@ public class ConfigGui implements ISoundLists
 																				  .setPos(17, 5)
 																				  .setSize(221, 15));
 
-		AddSoundSliders(builder);
+		ChangeableWidget soundListContainer = new ChangeableWidget(() -> CreateSoundSliders());
+		soundListContainer.setPos(10, 25).setSize(236, 122);
+		AddStateButton(builder, soundListContainer);
+		builder.widget(soundListContainer);
+
+
+
 		buildContext.addCloseListener(() ->
 									  {
 										  DataManger.saveData();
 									  });
+
 		return builder.build();
 	}
 
-	private static void AddStateButton(ModularWindow.Builder builder)
+	private static void AddStateButton(ModularWindow.Builder builder, ChangeableWidget soundListContainer)
 	{
+		final CycleButtonWidget btnToggleMode = new CycleButtonWidget();
+		btnToggleMode.setForEnum(State.class, () -> state, val ->
+					 {
+						 state = val;
+						 soundListContainer.notifyChangeServer();
+					 })
+					 .setLength(State.values().length)
+					 .setTextureGetter(integer -> new Text(state.name()).color(Color.WHITE.normal)
+																		.shadow())
+					 .setPos(13, 154)
+					 .setSize(52, 13);
 
+		builder.widget(btnToggleMode);
 	}
 
 	private static void AddAnchorMenu(ModularWindow.Builder builder)
@@ -67,20 +81,20 @@ public class ConfigGui implements ISoundLists
 	}
 
 
-	private static void AddSoundSliders(ModularWindow.Builder builder)
+	private static ListWidget CreateSoundSliders()
 	{
 
 		soundsList.clear();
 		switch (state)
 		{
-			case ALL:
+			case All:
 				soundsList.addAll(ForgeRegistries.SOUND_EVENTS.getKeys());
 				forbiddenSounds.forEach(fs -> soundsList.removeIf(sl -> sl.toString().contains(fs)));
 				break;
-			case RECENT:
+			case Recent:
 				soundsList.addAll(recentSounds);
 				break;
-			case MUFFLED:
+			case Muffled:
 				soundsList.addAll(muffledSounds.keySet());
 				break;
 		}
@@ -89,7 +103,7 @@ public class ConfigGui implements ISoundLists
 
 
 		ListWidget list = new ListWidget();
-		list.setBackground(new Rectangle().setColor(Color.BLACK.normal)).setPos(10, 25).setSize(236, 122);
+		list.setBackground(new Rectangle().setColor(Color.BLACK.normal)).fillParent();
 
 		for (ResourceLocation sound : soundsList)
 		{
@@ -104,12 +118,12 @@ public class ConfigGui implements ISoundLists
 		}
 
 
-		builder.widget(list);
+		return list;
 	}
 
 
 	private enum State
 	{
-		ALL, RECENT, MUFFLED
+		All, Recent, Muffled
 	}
 }
