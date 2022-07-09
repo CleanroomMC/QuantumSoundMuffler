@@ -19,37 +19,39 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-@Mod(modid = QuantumSoundMuffler.ID,
-        name = QuantumSoundMuffler.NAME,
-        version = QuantumSoundMuffler.VERSION,
-        clientSideOnly = true,
-        dependencies = "required-after:modularui@[1.0.3,);" )
-public class QuantumSoundMuffler {
-    public static final String ID = "quantumsoundmuffler";
-    public static final String NAME = "Quantum Sound Muffler";
-    public static final String VERSION = "0.1";
+@Mod(modid = QuantumSoundMuffler.ID, name = QuantumSoundMuffler.NAME, version = QuantumSoundMuffler.VERSION, clientSideOnly = true, dependencies = "required-after:modularui@[1.0.3,);")
+public class QuantumSoundMuffler
+{
+	public static final String ID = "quantumsoundmuffler";
+	public static final String NAME = "Quantum Sound Muffler";
+	public static final String VERSION = "0.1";
 
-    public static final Logger LOGGER = LogManager.getLogger(ID);
+	public static final Logger LOGGER = LogManager.getLogger(ID);
 
-    @Mod.Instance(ID)
-    public static QuantumSoundMuffler instance;
+	@Mod.Instance(ID)
+	public static QuantumSoundMuffler instance;
 
-    @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent event) {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+	@Mod.EventHandler
+	public void preInit(FMLPreInitializationEvent event)
+	{
+		MinecraftForge.EVENT_BUS.register(this);
+	}
 
-    @Mod.EventHandler
-    public void init(FMLInitializationEvent event) {
-        ISoundLists.forbiddenSounds.addAll(Arrays.asList(QuantumSoundMufflerConfig.forbiddenSounds));
-    }
-    @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent event) {
-        ClientRegistry.registerKeyBinding(ClientEventHandler.configGuiKey);
-    }
+	@Mod.EventHandler
+	public void init(FMLInitializationEvent event)
+	{
+		ISoundLists.forbiddenSounds.addAll(Arrays.asList(QuantumSoundMufflerConfig.forbiddenSounds));
+	}
 
-    @SubscribeEvent
-    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event){
-        DataManger.loadData();
-    }
+	@Mod.EventHandler
+	public void postInit(FMLPostInitializationEvent event)
+	{
+		ClientRegistry.registerKeyBinding(ClientEventHandler.configGuiKey);
+	}
+
+	@SubscribeEvent
+	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
+	{
+		DataManger.loadData();
+	}
 }

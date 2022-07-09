@@ -24,33 +24,40 @@ public class DataManger implements ISoundLists
 {
 	private static final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-	public static void loadData() {
+	public static void loadData()
+	{
 		loadMuffledMap().forEach((R, F) -> muffledSounds.put(new ResourceLocation(R), F));
-		if (!QuantumSoundMufflerConfig.disableAnchors) {
+		if (!QuantumSoundMufflerConfig.disableAnchors)
+		{
 			anchorList.clear();
 			anchorList.addAll(loadAnchors());
 		}
 	}
 
-	public static void saveData() {
+	public static void saveData()
+	{
 		saveMuffledMap();
 
-		if (!QuantumSoundMufflerConfig.disableAnchors) {
+		if (!QuantumSoundMufflerConfig.disableAnchors)
+		{
 			saveAnchors();
 		}
 	}
 
-	private static String getWorldName() {
+	private static String getWorldName()
+	{
 
-		if (Minecraft.getMinecraft().getIntegratedServer() == null) { // is on a server
+		if (Minecraft.getMinecraft().getIntegratedServer() == null)
+		{ // is on a server
 			return Minecraft.getMinecraft().world.getWorldInfo().getWorldName();
-		}
-		else {
+		} else
+		{
 			return Minecraft.getMinecraft().getIntegratedServer().getFolderName();
 		}
 	}
 
-	private static NBTTagCompound serializeAnchor(Anchor anchor) {
+	private static NBTTagCompound serializeAnchor(Anchor anchor)
+	{
 
 		NBTTagCompound anchorNBT = new NBTTagCompound();
 		NBTTagCompound muffledNBT = new NBTTagCompound();
@@ -58,7 +65,8 @@ public class DataManger implements ISoundLists
 		anchorNBT.setInteger("ID", anchor.getAnchorId());
 		anchorNBT.setString("NAME", anchor.getName());
 
-		if (anchor.getAnchorPos() == null) {
+		if (anchor.getAnchorPos() == null)
+		{
 			return anchorNBT;
 		}
 
@@ -71,53 +79,69 @@ public class DataManger implements ISoundLists
 		return anchorNBT;
 	}
 
-	public static Anchor deserializeAnchor(NBTTagCompound nbt) {
+	public static Anchor deserializeAnchor(NBTTagCompound nbt)
+	{
 		SortedMap<String, Float> muffledSounds = new TreeMap<>();
 		NBTTagCompound muffledNBT = nbt.getCompoundTag("MUFFLED");
 
-		for (String key : muffledNBT.getKeySet()) {
+		for (String key : muffledNBT.getKeySet())
+		{
 			muffledSounds.put(key, muffledNBT.getFloat(key));
 		}
 
-		if (!nbt.hasKey("POS")) {
+		if (!nbt.hasKey("POS"))
+		{
 			return new Anchor(nbt.getInteger("ID"), nbt.getString("NAME"));
-		} else {
-			return new Anchor(nbt.getInteger("ID"),
-							  nbt.getString("NAME"),
-							  BlockPos.fromLong(nbt.getLong("POS")),
-							  nbt.getInteger("DIM"),
-							  nbt.getInteger("RAD"),
-							  muffledSounds);
+		} else
+		{
+			return new Anchor(nbt.getInteger("ID"), nbt.getString("NAME"), BlockPos.fromLong(nbt.getLong("POS")), nbt.getInteger("DIM"), nbt.getInteger("RAD"), muffledSounds);
 		}
 	}
 
-	private static void saveMuffledMap() {
+	private static void saveMuffledMap()
+	{
 		new File("QSM/").mkdir();
-		try (Writer writer = new OutputStreamWriter(new FileOutputStream("QSM/soundsMuffled.dat"), StandardCharsets.UTF_8)) {
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream("QSM/soundsMuffled.dat"), StandardCharsets.UTF_8))
+		{
 			writer.write(gson.toJson(muffledSounds));
-		} catch (IOException ignored) {}
+		} catch (IOException ignored)
+		{
+		}
 	}
 
-	private static Map<String, Float> loadMuffledMap() {
-		try (InputStreamReader reader = new InputStreamReader(new FileInputStream("QSM/soundsMuffled.dat"), StandardCharsets.UTF_8)) {
-			return gson.fromJson(new JsonReader(reader), new TypeToken<Map<String, Float>>() {
+	private static Map<String, Float> loadMuffledMap()
+	{
+		try (InputStreamReader reader = new InputStreamReader(new FileInputStream("QSM/soundsMuffled.dat"), StandardCharsets.UTF_8))
+		{
+			return gson.fromJson(new JsonReader(reader), new TypeToken<Map<String, Float>>()
+			{
 			}.getType());
-		} catch (JsonSyntaxException | IOException e) {
+		} catch (JsonSyntaxException | IOException e)
+		{
 			return new HashMap<>();
 		}
 	}
 
-	private static void saveAnchors() {
+	private static void saveAnchors()
+	{
 		new File("QSM/", getWorldName()).mkdirs();
-		try (Writer writer = new OutputStreamWriter(new FileOutputStream("QSM/" + getWorldName() + "/anchors.dat"), StandardCharsets.UTF_8)) {
+		try (Writer writer = new OutputStreamWriter(new FileOutputStream("QSM/" + getWorldName() + "/anchors.dat"), StandardCharsets.UTF_8))
+		{
 			writer.write(gson.toJson(anchorList));
-		} catch (IOException ignored) {}
+		} catch (IOException ignored)
+		{
+		}
 	}
 
-	private static List<Anchor> loadAnchors() {
-		try (InputStreamReader reader = new InputStreamReader(new FileInputStream("QSM/" + getWorldName() + "/anchors.dat"), StandardCharsets.UTF_8)) {
-			return gson.fromJson(new JsonReader(reader), new TypeToken<List<Anchor>>() {}.getType());
-		} catch (JsonSyntaxException | IOException ignored) {
+	private static List<Anchor> loadAnchors()
+	{
+		try (InputStreamReader reader = new InputStreamReader(new FileInputStream("QSM/" + getWorldName() + "/anchors.dat"), StandardCharsets.UTF_8))
+		{
+			return gson.fromJson(new JsonReader(reader), new TypeToken<List<Anchor>>()
+			{
+			}.getType());
+		} catch (JsonSyntaxException | IOException ignored)
+		{
 			return IntStream.range(0, 10).mapToObj(i -> new Anchor(i, "Anchor " + i)).collect(Collectors.toList());
 		}
 	}

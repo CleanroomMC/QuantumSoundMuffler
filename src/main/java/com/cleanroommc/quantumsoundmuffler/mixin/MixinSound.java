@@ -15,41 +15,50 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SoundManager.class)
-public abstract class MixinSound implements ISoundLists {
+public abstract class MixinSound implements ISoundLists
+{
 
-    @Inject(method = "getClampedVolume", at = @At("RETURN"), cancellable = true)
-    private void getClampedVolume(ISound sound, CallbackInfoReturnable<Float> cir) {
-        ResourceLocation soundLocation = sound.getSoundLocation();
+	@Inject(method = "getClampedVolume", at = @At("RETURN"), cancellable = true)
+	private void getClampedVolume(ISound sound, CallbackInfoReturnable<Float> cir)
+	{
+		ResourceLocation soundLocation = sound.getSoundLocation();
 
-        if (isForbidden(soundLocation)){
-            return;
-        }
+		if (isForbidden(soundLocation))
+		{
+			return;
+		}
 
 
-        recentSounds.add(soundLocation);
+		recentSounds.add(soundLocation);
 
-        if (muffledSounds.containsKey(soundLocation)){
-            cir.setReturnValue(cir.getReturnValue() * muffledSounds.get(soundLocation));
-            return;
-        }
+		if (muffledSounds.containsKey(soundLocation))
+		{
+			cir.setReturnValue(cir.getReturnValue() * muffledSounds.get(soundLocation));
+			return;
+		}
 
-        if (!QuantumSoundMufflerConfig.disableAnchors){
-            Anchor anchor = Anchor.getAnchor(sound);
-            if (anchor != null){
-                cir.setReturnValue(cir.getReturnValue() * anchor.getMuffledSounds().get(soundLocation));
-                return;
-            }
-        }
+		if (!QuantumSoundMufflerConfig.disableAnchors)
+		{
+			Anchor anchor = Anchor.getAnchor(sound);
+			if (anchor != null)
+			{
+				cir.setReturnValue(cir.getReturnValue() * anchor.getMuffledSounds().get(soundLocation));
+				return;
+			}
+		}
 
-    }
+	}
 
-    private static boolean isForbidden(ResourceLocation soundLocation) {
-        for (String fs : forbiddenSounds) {
-            if (soundLocation.toString().contains(fs)) {
-                return true;
-            }
-        }
-        return false;
-    }
+	private static boolean isForbidden(ResourceLocation soundLocation)
+	{
+		for (String fs : forbiddenSounds)
+		{
+			if (soundLocation.toString().contains(fs))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
 
 }

@@ -14,22 +14,26 @@ import net.minecraftforge.fml.relauncher.Side;
 import org.lwjgl.input.Keyboard;
 
 @Mod.EventBusSubscriber(modid = QuantumSoundMuffler.ID, value = Side.CLIENT)
-public class ClientEventHandler {
+public class ClientEventHandler
+{
 
-    public static final KeyBinding configGuiKey = new KeyBinding("key.open_muffler", KeyConflictContext.IN_GAME, Keyboard.KEY_K, "key.categories.quantumsoundmuffler");
+	public static final KeyBinding configGuiKey = new KeyBinding("key.open_muffler", KeyConflictContext.IN_GAME, Keyboard.KEY_K, "key.categories.quantumsoundmuffler");
 
 
-    private static long time = 0;
+	private static long time = 0;
 
-    @SubscribeEvent
-    public static void onKeyInput(InputEvent.KeyInputEvent event) {
-        if (configGuiKey.isPressed() || configGuiKey.isKeyDown()) {
-            long t = Minecraft.getSystemTime();
-            if (t - time > 50) {
-                UIInfos.openClientUI(Minecraft.getMinecraft().player, ConfigGui::createConfigWindow);
-            }
-            time = t;
-        }
-    }
+	@SubscribeEvent
+	public static void onKeyInput(InputEvent.KeyInputEvent event)
+	{
+		if (configGuiKey.isPressed() || configGuiKey.isKeyDown())
+		{
+			long t = Minecraft.getSystemTime();
+			if (t - time > 50)
+			{
+				UIInfos.openClientUI(Minecraft.getMinecraft().player, ConfigGui::createConfigWindow);
+			}
+			time = t;
+		}
+	}
 
 }

@@ -11,37 +11,44 @@ import java.util.Map;
 
 @IFMLLoadingPlugin.Name("QuantumSoundMuffler-Core")
 @IFMLLoadingPlugin.MCVersion(ForgeVersion.mcVersion)
-public class QuantumSoundMufflerCore implements IFMLLoadingPlugin, IEarlyMixinLoader {
+public class QuantumSoundMufflerCore implements IFMLLoadingPlugin, IEarlyMixinLoader
+{
 
 
-    @Override
-    public String[] getASMTransformerClass() {
-        return new String[0];
-    }
+	@Override
+	public String[] getASMTransformerClass()
+	{
+		return new String[0];
+	}
 
-    @Override
-    public String getModContainerClass() {
-        return null;
-    }
+	@Override
+	public String getModContainerClass()
+	{
+		return null;
+	}
 
-    @Nullable
-    @Override
-    public String getSetupClass() {
-        return null;
-    }
+	@Nullable
+	@Override
+	public String getSetupClass()
+	{
+		return null;
+	}
 
-    @Override
-    public void injectData(Map<String, Object> data) {
-    }
+	@Override
+	public void injectData(Map<String, Object> data)
+	{
+	}
 
-    @Override
-    public String getAccessTransformerClass() {
-        return null;
-    }
+	@Override
+	public String getAccessTransformerClass()
+	{
+		return null;
+	}
 
-    @Override
-    public List<String> getMixinConfigs() {
-        return ImmutableList.of("mixin.quantumsoundmuffler.json");
-    }
+	@Override
+	public List<String> getMixinConfigs()
+	{
+		return ImmutableList.of("mixin.quantumsoundmuffler.json");
+	}
 
 }
