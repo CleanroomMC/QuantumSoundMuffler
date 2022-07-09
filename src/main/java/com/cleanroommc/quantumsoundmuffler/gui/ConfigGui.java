@@ -12,74 +12,104 @@ import com.cleanroommc.modularui.api.screen.UIBuildContext;
 import com.cleanroommc.modularui.common.widget.*;
 import com.cleanroommc.quantumsoundmuffler.QuantumSoundMuffler;
 import com.cleanroommc.quantumsoundmuffler.interfaces.ISoundLists;
+import com.cleanroommc.quantumsoundmuffler.utils.DataManger;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
-public class ConfigGui implements ISoundLists {
+public class ConfigGui implements ISoundLists
+{
 
-    private static final AdaptableUITexture BACKGROUND = AdaptableUITexture.of("modularui:gui/background/background", 176, 166, 3);
-    public static ModularWindow createConfigWindow(UIBuildContext buildContext) {
-        ModularWindow.Builder builder = ModularWindow.builder(256, 176);
+	//TODO remember last state
+	private static State state = State.ALL;
 
-        // anchor sidebar
-        AddAnchorMenu(builder);
+	private static final AdaptableUITexture BACKGROUND = AdaptableUITexture.of("modularui:gui/background/background", 176, 166, 3);
 
+	public static ModularWindow createConfigWindow(UIBuildContext buildContext)
+	{
+		ModularWindow.Builder builder = ModularWindow.builder(256, 176);
 
-        builder.setBackground(ModularUITextures.VANILLA_BACKGROUND)
-                .widget(new TextWidget(new Text(QuantumSoundMuffler.NAME).color(Color.WHITE.normal).shadow())
-                        .setBackground(ModularUITextures.ITEM_SLOT)
-                        .setPos(17, 5)
-                        .setSize(221, 15)
-                );
-
-        AddSoundSliders(builder);
-
-        return builder.build();
-    }
-
-    private static void AddAnchorMenu(ModularWindow.Builder builder) {
-        builder.widget(new ExpandTab()
-                .setNormalTexture(ModularUITextures.ICON_INFO.withFixedSize(14, 14, 3, 3))
-                .widget(new DrawableWidget()
-                        .setDrawable(ModularUITextures.ICON_INFO)
-                        .setSize(14, 14)
-                        .setPos(3, 3))
-                .setExpandedSize(60, 160)
-                .setBackground(BACKGROUND)
-                .setSize(20, 20)
-                .setPos(258, 3)
-                .respectAreaInJei());
-    }
+		// anchor sidebar
+		AddAnchorMenu(builder);
 
 
-    private static void AddSoundSliders(ModularWindow.Builder builder){
+		builder.setBackground(BACKGROUND)
+			   .widget(new TextWidget(new Text(QuantumSoundMuffler.NAME).color(Color.WHITE.normal)
+																		.shadow()).setBackground(ModularUITextures.ITEM_SLOT)
+																				  .setPos(17, 5)
+																				  .setSize(221, 15));
 
-        soundsList.clear();
-        soundsList.addAll(muffledSounds.keySet());
-        soundsList.addAll(recentSounds);
+		AddSoundSliders(builder);
+		buildContext.addCloseListener(() ->
+									  {
+										  DataManger.saveData();
+									  });
+		return builder.build();
+	}
 
-//        if (soundsList.isEmpty()){
-//            return;
-//        }
+	private static void AddStateButton(ModularWindow.Builder builder)
+	{
 
-        ListWidget list = new ListWidget();
-        list.setBackground(new Rectangle().setColor(Color.BLACK.normal))
-                .setPos(10, 25)
-                .setSize(236, 130);
+	}
 
-        for (ResourceLocation sound: soundsList){
-            float vol;
-            float maxVol = 1F;
-
-            vol = muffledSounds.getOrDefault(sound, maxVol);
-
-
-            QuantumSoundMuffler.LOGGER.info(String.format("%s: %f", sound.toString(), vol));
-            MuffledSlider slider = new MuffledSlider(vol, sound, null);
-            list.addChild(slider);
-        }
+	private static void AddAnchorMenu(ModularWindow.Builder builder)
+	{
+		builder.widget(new ExpandTab().setNormalTexture(ModularUITextures.ICON_INFO.withFixedSize(14, 14, 3, 3))
+									  .widget(new DrawableWidget().setDrawable(ModularUITextures.ICON_INFO)
+																  .setSize(14, 14)
+																  .setPos(3, 3))
+									  .setExpandedSize(60, 160)
+									  .setBackground(BACKGROUND)
+									  .setSize(20, 20)
+									  .setPos(258, 3)
+									  .respectAreaInJei());
+	}
 
 
-        builder.widget(list);
-    }
+	private static void AddSoundSliders(ModularWindow.Builder builder)
+	{
 
+		soundsList.clear();
+		switch (state)
+		{
+			case ALL:
+				soundsList.addAll(ForgeRegistries.SOUND_EVENTS.getKeys());
+				forbiddenSounds.forEach(fs -> soundsList.removeIf(sl -> sl.toString().contains(fs)));
+				break;
+			case RECENT:
+				soundsList.addAll(recentSounds);
+				break;
+			case MUFFLED:
+				soundsList.addAll(muffledSounds.keySet());
+				break;
+		}
+		soundsList.clear();
+		soundsList.addAll(recentSounds);
+
+
+		ListWidget list = new ListWidget();
+		list.setBackground(new Rectangle().setColor(Color.BLACK.normal)).setPos(10, 25).setSize(236, 122);
+
+		for (ResourceLocation sound : soundsList)
+		{
+			float vol;
+			float maxVol = 1F;
+
+			//TODO pull from anchor
+			vol = muffledSounds.getOrDefault(sound, maxVol);
+
+			MuffledSlider slider = new MuffledSlider(vol, sound, null);
+			list.addChild(slider);
+		}
+
+
+		builder.widget(list);
+	}
+
+
+	private enum State
+	{
+		ALL, RECENT, MUFFLED
+	}
 }

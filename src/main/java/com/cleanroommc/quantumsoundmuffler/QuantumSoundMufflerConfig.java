@@ -18,7 +18,7 @@ public class QuantumSoundMufflerConfig {
     @Config.SlidingOption()
     @Config.Name("Default Mute Volume")
     @Config.Comment("Default volume set when mute button is pressed")
-    public static double defaultMuteVolume = 0.0;
+    public static float defaultMuteVolume = 0.0f;
 
     @Config.Name("Disable Anchors")
     public static boolean disableAnchors = false;

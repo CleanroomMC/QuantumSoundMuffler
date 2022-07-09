@@ -2,6 +2,7 @@ package com.cleanroommc.quantumsoundmuffler;
 
 
 import com.cleanroommc.quantumsoundmuffler.interfaces.ISoundLists;
+import com.cleanroommc.quantumsoundmuffler.utils.DataManger;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
@@ -12,6 +13,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +21,9 @@ import java.util.Arrays;
 
 @Mod(modid = QuantumSoundMuffler.ID,
         name = QuantumSoundMuffler.NAME,
-        version = QuantumSoundMuffler.VERSION)
+        version = QuantumSoundMuffler.VERSION,
+        clientSideOnly = true,
+        dependencies = "required-after:modularui@[1.0.3,);" )
 public class QuantumSoundMuffler {
     public static final String ID = "quantumsoundmuffler";
     public static final String NAME = "Quantum Sound Muffler";
@@ -39,12 +43,13 @@ public class QuantumSoundMuffler {
     public void init(FMLInitializationEvent event) {
         ISoundLists.forbiddenSounds.addAll(Arrays.asList(QuantumSoundMufflerConfig.forbiddenSounds));
     }
-
-
-
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event) {
         ClientRegistry.registerKeyBinding(ClientEventHandler.configGuiKey);
     }
 
+    @SubscribeEvent
+    public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event){
+        DataManger.loadData();
+    }
 }
