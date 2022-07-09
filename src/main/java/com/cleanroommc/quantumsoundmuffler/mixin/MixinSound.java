@@ -1,7 +1,10 @@
 package com.cleanroommc.quantumsoundmuffler.mixin;
 
 import com.cleanroommc.quantumsoundmuffler.QuantumSoundMuffler;
+import com.cleanroommc.quantumsoundmuffler.QuantumSoundMufflerConfig;
 import com.cleanroommc.quantumsoundmuffler.interfaces.ISoundLists;
+import com.cleanroommc.quantumsoundmuffler.utils.Anchor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.Sound;
 import net.minecraft.client.audio.SoundManager;
@@ -15,12 +18,38 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinSound implements ISoundLists {
 
     @Inject(method = "getClampedVolume", at = @At("RETURN"), cancellable = true)
-    private void getClampedVolume(ISound soundIn, CallbackInfoReturnable<Float> cir) {
-        Sound sound = soundIn.getSound();
+    private void getClampedVolume(ISound sound, CallbackInfoReturnable<Float> cir) {
+        ResourceLocation soundLocation = sound.getSoundLocation();
 
-        recentSounds.add(soundIn.getSoundLocation());
+        if (isForbidden(soundLocation)){
+            return;
+        }
 
-        //cir.setReturnValue(0.0f);
+
+        recentSounds.add(soundLocation);
+
+        if (muffledSounds.containsKey(soundLocation)){
+            cir.setReturnValue(cir.getReturnValue() * muffledSounds.get(soundLocation));
+            return;
+        }
+
+        if (!QuantumSoundMufflerConfig.disableAnchors){
+            Anchor anchor = Anchor.getAnchor(sound);
+            if (anchor != null){
+                cir.setReturnValue(cir.getReturnValue() * anchor.getMuffledSounds().get(soundLocation));
+                return;
+            }
+        }
+
+    }
+
+    private static boolean isForbidden(ResourceLocation soundLocation) {
+        for (String fs : forbiddenSounds) {
+            if (soundLocation.toString().contains(fs)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
