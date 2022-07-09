@@ -1,5 +1,9 @@
 buildscript {
     repositories {
+		maven {
+			name = "forge"
+			url = "https://maven.minecraftforge.net/"
+		}
         maven {
 			url = 'https://maven.cleanroommc.com'
 		}
@@ -60,6 +64,10 @@ repositories {
     maven {
         url = 'https://repo.spongepowered.org/maven'
     }
+	maven {
+		name = "CurseForge"
+		url = 'https://www.cursemaven.com'
+	}
 }
 
 dependencies {
@@ -70,6 +78,7 @@ dependencies {
 	if (project.use_mixins.toBoolean()) {
 		deobfCompile 'zone.rong:mixinbooter:4.2'
     }
+	deobfCompile 'curse.maven:modularui-624243:3857399'
 
 }
 
