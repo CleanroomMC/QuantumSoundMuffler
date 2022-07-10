@@ -16,18 +16,10 @@ import net.minecraft.util.math.MathHelper;
 
 public class MuffledSlider extends MultiChildWidget implements ISoundLists
 {
-	/**
-	 * TODO
-	 * 		Hide slider until click
-	 * 		thing
-	 */
-
-	public static boolean showSlider = false;
 	private final ResourceLocation sound;
 	private float sliderValue;
 	private final SliderWidget sliderVol;
 
-	private Text labelText;
 	private final DynamicTextWidget txtLabel;
 	private final CycleButtonWidget btnToggleSound;
 	private final ButtonWidget btnPlaySound;
@@ -81,11 +73,12 @@ public class MuffledSlider extends MultiChildWidget implements ISoundLists
 	{
 		final SliderWidget sliderVol;
 		sliderVol = new SliderWidget();
-		sliderVol.setBounds(0.0f, 1.0f)
+		sliderVol.setBounds(0.0f, 0.9f)
 				 .setGetter(() -> this.sliderValue)
 				 .setSetter(val ->
 							{
-								setSliderValue(val);
+								this.sliderValue = MathHelper.clamp(val, 0.0f, 0.9f);
+								muffledSounds.replace(this.sound, this.sliderValue);
 								//sliderVol.setBackground(sliderBackground.getSubArea(0, 0, val, 1));
 							})
 				 .setBackground(sliderBackground.getSubArea(0, 0, 1, 1))
@@ -95,7 +88,6 @@ public class MuffledSlider extends MultiChildWidget implements ISoundLists
 							{
 								widget.setEnabled(isMuffled() && txtLabel.isRightBelowMouse());
 							});
-		sliderVol.setValue(this.sliderValue, false);
 		return sliderVol;
 	}
 
@@ -124,7 +116,7 @@ public class MuffledSlider extends MultiChildWidget implements ISoundLists
 										 muffledSounds.remove(sound);
 									 } else if (value == 1)
 									 {
-										 setSliderValue(QuantumSoundMufflerConfig.defaultMuteVolume);
+										 sliderVol.setValue(QuantumSoundMufflerConfig.defaultMuteVolume, false);
 										 muffledSounds.put(sound, this.sliderValue);
 									 }
 								 })
@@ -144,22 +136,12 @@ public class MuffledSlider extends MultiChildWidget implements ISoundLists
 	}
 
 
-	private void setSliderValue(float value)
-	{
-		this.sliderValue = MathHelper.clamp(value, 0.0f, 0.9f);
-		updateVolume();
-	}
-
 	private String getSoundName()
 	{
 		return String.format("%s:%s", sound.getNamespace(), sound.getPath().length() > 25 ? sound.getPath()
 																								 .substring(0, 25) : sound.getPath());
 	}
 
-	private void updateVolume()
-	{
-		muffledSounds.replace(this.sound, this.sliderValue);
-	}
 
 	public boolean isMuffled()
 	{

@@ -30,7 +30,11 @@ public class DataManger implements ISoundLists
 		if (!QuantumSoundMufflerConfig.disableAnchors)
 		{
 			anchorList.clear();
-			anchorList.addAll(loadAnchors());
+			List<Anchor> anchors = loadAnchors();
+			if (anchors != null)
+			{
+				anchorList.addAll(anchors);
+			}
 		}
 	}
 
@@ -142,7 +146,7 @@ public class DataManger implements ISoundLists
 			}.getType());
 		} catch (JsonSyntaxException | IOException ignored)
 		{
-			return IntStream.range(0, 10).mapToObj(i -> new Anchor(i, "Anchor " + i)).collect(Collectors.toList());
+			return null;
 		}
 	}
 
