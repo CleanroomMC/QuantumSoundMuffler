@@ -23,8 +23,6 @@ public class ConfigGui implements ISoundLists
 {
 	private static State state = State.Recent;
 
-	private static final AdaptableUITexture BACKGROUND = AdaptableUITexture.of("modularui:gui/background/background", 176, 166, 3);
-
 	private static ChangeableWidget soundListContainer;
 
 	public static ModularWindow createConfigWindow(UIBuildContext buildContext)
@@ -32,17 +30,18 @@ public class ConfigGui implements ISoundLists
 		ModularWindow.Builder builder = ModularWindow.builder(256, 176);
 
 		// anchor sidebar
-		AddAnchorMenu(builder);
+		//AddAnchorMenu(builder);
 
 
-		builder.setBackground(BACKGROUND)
+		builder.setBackground(ModularUITextures.VANILLA_BACKGROUND)
 			   .widget(new TextWidget(new Text(QuantumSoundMuffler.NAME).color(Color.WHITE.normal)
 																		.shadow()).setBackground(ModularUITextures.ITEM_SLOT)
 																				  .setPos(17, 5)
 																				  .setSize(221, 15));
 
-		soundListContainer = new ChangeableWidget(ConfigGui::CreateSoundSliders);
+		//soundListContainer = new ChangeableWidget(ConfigGui::CreateSoundSliders);
 		//soundListContainer.setPos(10, 25).setSize(236, 122).setBackground(new Rectangle().setColor(Color.BLACK.normal));
+		//builder.widget(soundListContainer);
 		//AddStateButton(builder);
 		builder.widget(CreateSoundSliders().setPos(10, 25)
 										   .setSize(236, 122)
@@ -50,8 +49,10 @@ public class ConfigGui implements ISoundLists
 
 
 		buildContext.addCloseListener(DataManger::saveData);
+		buildContext.setShowJei(false);
+		ModularWindow build = builder.build();
 
-		return builder.build();
+		return build;
 	}
 
 	private static void AddStateButton(ModularWindow.Builder builder)
@@ -107,15 +108,15 @@ public class ConfigGui implements ISoundLists
 		{
 			case All:
 				soundsList.addAll(ForgeRegistries.SOUND_EVENTS.getKeys());
-				forbiddenSounds.forEach(fs -> soundsList.removeIf(sl -> sl.toString().contains(fs)));
 				break;
 			case Recent:
 				soundsList.addAll(recentSounds);
-				break;
 			case Muffled:
 				soundsList.addAll(muffledSounds.keySet());
 				break;
 		}
+
+		forbiddenSounds.forEach(fs -> soundsList.removeIf(sl -> sl.toString().contains(fs)));
 
 		ListWidget list = new ListWidget();
 

@@ -28,7 +28,6 @@ public abstract class MixinSound implements ISoundLists
 			return;
 		}
 
-
 		recentSounds.add(soundLocation);
 
 		if (muffledSounds.containsKey(soundLocation))

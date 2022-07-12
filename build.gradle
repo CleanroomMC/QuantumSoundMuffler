@@ -78,7 +78,9 @@ dependencies {
 	if (project.use_mixins.toBoolean()) {
 		deobfCompile 'zone.rong:mixinbooter:4.2'
 	}
-	deobfCompile 'curse.maven:modularui-624243:3857399'
+
+	compile files('etc/modularui-1.0.3.jar')
+	//deobfCompile 'curse.maven:modularui-624243:3857399'
 
 }
 

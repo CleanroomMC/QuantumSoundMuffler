@@ -2,8 +2,10 @@ package com.cleanroommc.quantumsoundmuffler.gui;
 
 import com.cleanroommc.modularui.api.ModularUITextures;
 import com.cleanroommc.modularui.api.drawable.AdaptableUITexture;
+import com.cleanroommc.modularui.api.drawable.IDrawable;
 import com.cleanroommc.modularui.api.drawable.Text;
 import com.cleanroommc.modularui.api.drawable.UITexture;
+import com.cleanroommc.modularui.api.drawable.shapes.Rectangle;
 import com.cleanroommc.modularui.api.math.Alignment;
 import com.cleanroommc.modularui.api.math.Color;
 import com.cleanroommc.modularui.common.widget.*;
@@ -37,9 +39,8 @@ public class MuffledSlider extends MultiChildWidget implements ISoundLists
 		btnPlaySound = createPlayButton();
 
 		txtLabel = TextWidget.dynamicText(() -> getLabel());
-		txtLabel.setTextAlignment(Alignment.Center)
-				.setSize(sliderVol.getSize().width - 6, sliderVol.getSize().height)
-				.setPos(6, 2);
+		txtLabel.setTextAlignment(Alignment.Center).setSize(sliderVol.getSize().width - 6, sliderVol.getSize().height);
+		//.setPos(6, 2);
 
 		this.addChild(sliderVol);
 		this.addChild(txtLabel);
@@ -78,12 +79,19 @@ public class MuffledSlider extends MultiChildWidget implements ISoundLists
 				 .setSetter(val ->
 							{
 								this.sliderValue = MathHelper.clamp(val, 0.0f, 0.9f);
+
 								muffledSounds.replace(this.sound, this.sliderValue);
-								//sliderVol.setBackground(sliderBackground.getSubArea(0, 0, val, 1));
+
+								if (!isMuffled())
+								{
+									return;
+								}
+
+								this.setBackground(sliderBackground.getSubArea(0, 0, sliderValue / 0.9f, 1)
+																   .withFixedSize(205 * (sliderValue / 0.9f), 13));
 							})
-				 .setBackground(sliderBackground.getSubArea(0, 0, 1, 1))
 				 .setSize(205, 13)
-				 .setPos(2, 2)
+				 .setBackground(new Rectangle().setColor(0x00000000))
 				 .setTicker(widget ->
 							{
 								widget.setEnabled(isMuffled() && txtLabel.isRightBelowMouse());
@@ -113,6 +121,7 @@ public class MuffledSlider extends MultiChildWidget implements ISoundLists
 								 {
 									 if (value == 0)
 									 {
+										 this.setBackground((IDrawable) null);
 										 muffledSounds.remove(sound);
 									 } else if (value == 1)
 									 {
