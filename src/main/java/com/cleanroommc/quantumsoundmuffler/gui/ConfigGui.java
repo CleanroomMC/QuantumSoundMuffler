@@ -24,14 +24,17 @@ public class ConfigGui implements ISoundLists
 	private static State state = State.Recent;
 
 	private static ChangeableWidget soundListContainer;
+	public static boolean wasOpened = false;
 
 	public static ModularWindow createConfigWindow(UIBuildContext buildContext)
 	{
+		buildContext.setShowJei(false);
+		buildContext.addCloseListener(() -> {
+			DataManger.saveData();
+			wasOpened = false;
+		});
+
 		ModularWindow.Builder builder = ModularWindow.builder(256, 176);
-
-		// anchor sidebar
-		//AddAnchorMenu(builder);
-
 
 		builder.setBackground(ModularUITextures.VANILLA_BACKGROUND)
 			   .widget(new TextWidget(new Text(QuantumSoundMuffler.NAME).color(Color.WHITE.normal)
@@ -39,20 +42,13 @@ public class ConfigGui implements ISoundLists
 																				  .setPos(17, 5)
 																				  .setSize(221, 15));
 
-		//soundListContainer = new ChangeableWidget(ConfigGui::CreateSoundSliders);
-		//soundListContainer.setPos(10, 25).setSize(236, 122).setBackground(new Rectangle().setColor(Color.BLACK.normal));
-		//builder.widget(soundListContainer);
-		//AddStateButton(builder);
 		builder.widget(CreateSoundSliders().setPos(10, 25)
 										   .setSize(236, 122)
 										   .setBackground(new Rectangle().setColor(Color.BLACK.normal)));
 
+		wasOpened = true;
 
-		buildContext.addCloseListener(DataManger::saveData);
-		buildContext.setShowJei(false);
-		ModularWindow build = builder.build();
-
-		return build;
+		return builder.build();
 	}
 
 	private static void AddStateButton(ModularWindow.Builder builder)
@@ -94,7 +90,6 @@ public class ConfigGui implements ISoundLists
 		{
 
 		}
-
 
 		return widget;
 	}

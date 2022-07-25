@@ -1,25 +1,19 @@
 package com.cleanroommc.quantumsoundmuffler;
 
 
+import com.cleanroommc.modularui.api.KeyBindAPI;
 import com.cleanroommc.quantumsoundmuffler.interfaces.ISoundLists;
-import com.cleanroommc.quantumsoundmuffler.utils.DataManger;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.Config;
-import net.minecraftforge.common.config.ConfigManager;
-import net.minecraftforge.fml.client.event.ConfigChangedEvent.OnConfigChangedEvent;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Arrays;
 
-@Mod(modid = QuantumSoundMuffler.ID, name = QuantumSoundMuffler.NAME, version = QuantumSoundMuffler.VERSION, clientSideOnly = true, dependencies = "required-after:modularui@[1.0.3,);")
+@Mod(modid = QuantumSoundMuffler.ID, name = QuantumSoundMuffler.NAME, version = QuantumSoundMuffler.VERSION, clientSideOnly = true, dependencies = "required-after:modularui@[1.0.6,);")
 public class QuantumSoundMuffler
 {
 	public static final String ID = "quantumsoundmuffler";
@@ -32,10 +26,7 @@ public class QuantumSoundMuffler
 	public static QuantumSoundMuffler instance;
 
 	@Mod.EventHandler
-	public void preInit(FMLPreInitializationEvent event)
-	{
-		MinecraftForge.EVENT_BUS.register(this);
-	}
+	public void preInit(FMLPreInitializationEvent event) {}
 
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent event)
@@ -47,11 +38,6 @@ public class QuantumSoundMuffler
 	public void postInit(FMLPostInitializationEvent event)
 	{
 		ClientRegistry.registerKeyBinding(ClientEventHandler.configGuiKey);
-	}
-
-	@SubscribeEvent
-	public void onPlayerLoggedIn(PlayerEvent.PlayerLoggedInEvent event)
-	{
-		DataManger.loadData();
+		KeyBindAPI.forceCheckKeyBind(ClientEventHandler.configGuiKey);
 	}
 }

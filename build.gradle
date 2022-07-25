@@ -79,9 +79,7 @@ dependencies {
 		deobfCompile 'zone.rong:mixinbooter:4.2'
 	}
 
-	compile files('etc/modularui-1.0.3.jar')
-	//deobfCompile 'curse.maven:modularui-624243:3857399'
-
+	compile files('etc/modularui-1.0.6.jar')
 }
 
 sourceSets {
@@ -120,7 +118,7 @@ jar {
 			attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
 		}
 		// false for dev and true for non dev
-		attribute_map['ForceLoadAsMod'] = false
+		attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == "build"
 		attributes(attribute_map)
 	}
 }
