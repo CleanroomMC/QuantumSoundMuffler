@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "minVersion": "0.8.5-GTNH",
+  "package": "com.cleanroommc.quantumsoundmuffler.mixins",
+  "refmap": "mixins.quantumsoundmuffler.refmap.json",
+  "target": "@env(DEFAULT)",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "minecraft.MixinSoundManager",
+    "minecraft.IMixinGuiContainer"
+  ]
+}
